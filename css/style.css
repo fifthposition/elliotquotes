@@ -1,0 +1,18 @@
+body { background: #E0EEEE; margin: 70px 0 90px 85px }
+a { color: #000000 }
+#wrapper { width: 100% }
+#header { width: 100%; border-top: 1px solid #E0EEEE }
+#header h1 { float: right; clear: left; font: normal medium Georgia, serif; font-weight: normal; margin: 20px 105px 50px 50px }
+#header a, .date_written a, .fifth { text-decoration: none }
+h2 { font-family:'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-weight: normal; line-height: 1.5; margin: 50px 0 40px }
+p { font-family: Georgia, serif; line-height: 1.75 }
+#footer p, #footer a, .date_written, .date_written a, .arc_date { color: #838B8B }
+
+/* Tables */
+table { border-collapse:collapse; }
+td { padding-bottom:15px; line-height: 1.75;}
+td.date { text-align:right; padding-right:15px; width:150px; }
+
+#content, #footer { width: 600px }
+#footer { margin-top: 70px }
+#footer p, #footer p a { font-size: small }
