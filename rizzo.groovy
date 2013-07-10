@@ -43,23 +43,17 @@ posts.each { post ->
 }
 
 new File("$published/archives/").mkdirs()
-def archiveContent = """
-	             <p></p>
-	             <table>
-"""
+def archiveContent = ""
 
 posts.sort { it.dateCreated }.reverse().each { post ->
     archiveContent += """
-				     <tr>
-	                     <td valign="top" class="date"><span class="arc_date">${archiveFormatter.format(post.dateCreated)}</span></td>
-	                     <td valign="top"><a href="/${post.name}/">${post.title}</a></td>
-	                 </tr>
+                <tr>
+                    <td valign="top" class="date">${archiveFormatter.format(post.dateCreated)}</td>
+                    <td valign="top"><a href="#"><a href="/${post.name}/">${post.title}</a></td>
+                </tr>
     """
 }
 
-archiveContent += """
-	             </table>
-"""
 new File("$published/archives/index.html").write("${engine.createTemplate(archivesTemplate).make(["content": archiveContent])}")
 
 new File("$published/css/").mkdirs()
@@ -68,4 +62,3 @@ new AntBuilder().copy(toDir: "$published/css/") {
 }
 
 println "All done!"
-
