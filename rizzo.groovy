@@ -8,6 +8,7 @@ published.mkdirs()
 def homeTemplate = new File("$root/templates/home.html")
 def postTemplate = new File("$root/templates/post.html")
 def archivesTemplate = new File("$root/templates/archives.html")
+def archivesEntryTemplate = new File("$root/templates/arc_entry.html")
 SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy h:mm a")
 SimpleDateFormat archiveFormatter = new SimpleDateFormat("MMMMM d, yyyy")
 
@@ -46,12 +47,7 @@ new File("$published/archives/").mkdirs()
 def archiveContent = ""
 
 posts.sort { it.dateCreated }.reverse().each { post ->
-    archiveContent += """
-                <tr>
-                    <td valign="top" class="date">${archiveFormatter.format(post.dateCreated)}</td>
-                    <td valign="top"><a href="#"><a href="/${post.name}/">${post.title}</a></td>
-                </tr>
-    """
+    archiveContent += "${engine.createTemplate(archivesEntryTemplate).make(["postDateCreated": archiveFormatter.format(post.dateCreated), "postName": post.name, "postTitle": post.title])}"
 }
 
 new File("$published/archives/index.html").write("${engine.createTemplate(archivesTemplate).make(["content": archiveContent])}")
