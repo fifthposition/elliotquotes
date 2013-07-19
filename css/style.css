@@ -1,6 +1,6 @@
 body { width: 640px; margin: 70px auto }
 a { color: #000000 }
-h1, h1 a, h2, h2 a, a.fifth { display: inline; text-decoration: none }
+h1, h1 a, h2, h2 a { display: inline; text-decoration: none }
 h1, h2, p, td { font: normal medium 'EB Garamond', Georgia, serif; line-height: 1.8 }
 table { margin: 20px 0 0; border-collapse:collapse }
 td { padding-bottom:15px; line-height: 1.75 }
