@@ -11,8 +11,7 @@ def archivesTemplate = new File("$root/templates/archives.html")
 def archivesEntryTemplate = new File("$root/templates/arc_entry.html")
 def posts = []
 def engine = new SimpleTemplateEngine()
-SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy h:mm a")
-SimpleDateFormat archiveFormatter = new SimpleDateFormat("MMMMM d, yyyy")
+SimpleDateFormat formatter = new SimpleDateFormat("MMMMM d, yyyy")
 
 //lastUpdated is not used yet; nonetheless
 class Post {
@@ -29,29 +28,53 @@ new File("$root/posts/").eachFile { file ->
     List postText = file.readLines()
     def name = file.name[0 .. file.name.lastIndexOf('.')-1]
     def postDate = formatter.parse(postText[1].toString())
-    def dateWritten = archiveFormatter.parse(postText[2].toString())
-    posts << new Post(title:postText[0], name:name, content: postText[3..-1].join("\n"), dateWritten: dateWritten, dateCreated: postDate, lastUpdated: postDate)
+    def dateWritten = formatter.parse(postText[2].toString())
+    posts << new Post(title:postText[0], name:name,
+                      content: postText[3..-1].join("\n"),
+                      dateWritten: dateWritten, dateCreated: postDate,
+                      lastUpdated: postDate)
 }
 
-//Sort posts
-posts = posts.sort { one, two -> one.dateCreated <=> two.dateCreated }.reverse()
+//Sort posts and get the most recent one
+posts = posts.sort { one, two ->
+    one.dateCreated <=> two.dateCreated
+}.reverse()
+def recent = posts.first()
 
 //Create the home page
-new File("$published/index.html").write("${engine.createTemplate(homeTemplate).make(["postTitle": posts.first().title, "postName": posts.first().name, "postDateWritten": archiveFormatter.format(posts.first().dateWritten), "postContent": posts.first().content])}")
+
+def home = ["postTitle": recent.title,
+            "postName": recent.name,
+            "postDateWritten": formatter.format(recent.dateWritten),
+            "postContent": recent.content]
+            
+String homepage = "${engine.createTemplate(homeTemplate).make(home)}"
+new File("$published/index.html").write(homepage)
 
 //Create each post page
 posts.each { post ->
+    def quote = ["postTitle": post.title,
+                 "postDateWritten": formatter.format(post.dateWritten),
+                 "postContent": post.content]
     new File("$published/${post.name}/").mkdirs()
-    new File("$published/${post.name}/index.html").write("${engine.createTemplate(postTemplate).make(["postTitle": post.title, "postDateWritten": archiveFormatter.format(post.dateWritten), "postContent": post.content])}")
+    String quotePage = "${engine.createTemplate(postTemplate).make(quote)}"
+    new File("$published/${post.name}/index.html").write(quotePage)
 }
 
 //Create the archives page
 new File("$published/archives/").mkdirs()
 def archiveContent = ""
 posts.each { post ->
-    archiveContent += "${engine.createTemplate(archivesEntryTemplate).make(["postDateCreated": archiveFormatter.format(post.dateCreated), "postName": post.name, "postTitle": post.title])}"
+    def quote = ["postDateCreated": formatter.format(post.dateCreated),
+                 "postName": post.name,
+                 "postTitle": post.title]
+    String quoteEntry = "${engine.createTemplate(archivesEntryTemplate).make(quote)}"
+
+    archiveContent += quoteEntry
 }
-new File("$published/archives/index.html").write("${engine.createTemplate(archivesTemplate).make(["content": archiveContent])}")
+def quoteEntries = ["content": archiveContent]
+String entries = "${engine.createTemplate(archivesTemplate).make(quoteEntries)}"
+new File("$published/archives/index.html").write(entries)
 
 //Copy the CSS files
 new File("$published/css/").mkdirs()
