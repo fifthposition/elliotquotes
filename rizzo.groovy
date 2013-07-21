@@ -33,11 +33,14 @@ new File("$root/posts/").eachFile { file ->
     posts << new Post(title:postText[0], name:name, content: postText[3..-1].join("\n"), dateWritten: dateWritten, dateCreated: postDate, lastUpdated: postDate)
 }
 
+//Sort posts
+posts = posts.sort { one, two -> one.dateCreated <=> two.dateCreated }.reverse()
+
 //Create the home page
-new File("$published/index.html").write("${engine.createTemplate(homeTemplate).make(["postTitle": posts.last().title, "postName": posts.last().name, "postDateWritten": archiveFormatter.format(posts.last().dateWritten), "postContent": posts.last().content])}")
+new File("$published/index.html").write("${engine.createTemplate(homeTemplate).make(["postTitle": posts.first().title, "postName": posts.first().name, "postDateWritten": archiveFormatter.format(posts.first().dateWritten), "postContent": posts.first().content])}")
 
 //Create each post page
-posts.sort { it.dateCreated }.reverse().each { post ->
+posts.each { post ->
     new File("$published/${post.name}/").mkdirs()
     new File("$published/${post.name}/index.html").write("${engine.createTemplate(postTemplate).make(["postTitle": post.title, "postDateWritten": archiveFormatter.format(post.dateWritten), "postContent": post.content])}")
 }
@@ -45,7 +48,7 @@ posts.sort { it.dateCreated }.reverse().each { post ->
 //Create the archives page
 new File("$published/archives/").mkdirs()
 def archiveContent = ""
-posts.sort { it.dateCreated }.reverse().each { post ->
+posts.each { post ->
     archiveContent += "${engine.createTemplate(archivesEntryTemplate).make(["postDateCreated": archiveFormatter.format(post.dateCreated), "postName": post.name, "postTitle": post.title])}"
 }
 new File("$published/archives/index.html").write("${engine.createTemplate(archivesTemplate).make(["content": archiveContent])}")
